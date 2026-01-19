@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Booking Mini Soccer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:Poppins,Arial}
+body{
+  background:linear-gradient(135deg,#e8f5e9,#f4f6f9);
+  padding:30px;
+  color:#333;
+}
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#1db954,#17a84a);
+  color:#fff;
+  padding:26px;
+  border-radius:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,.18);
+  margin-bottom:22px;
+}
+.header h2{margin:0}
+.header p{margin:6px 0 0;opacity:.9}
+/* STATS */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px;
+  margin-bottom:20px;
+}
+.stat{
+  background:#fff;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  text-align:center;
+}
+.stat h3{margin:0;font-size:22px}
+.stat span{font-size:13px;color:#777}
+.stat.pending{border-top:4px solid #f0ad4e}
+.stat.approve{border-top:4px solid #1db954}
+.stat.cancel{border-top:4px solid #d9534f}
+/* CARD */
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  margin-bottom:20px;
+}
+/* FILTER */
+.filter{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.filter input,.filter button{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+.filter input{min-width:160px}
+.filter button{
+  background:#1db954;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  transition:.2s;
+}
+.filter button:hover{transform:translateY(-2px)}
+.filter button.reset{background:#777}
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{
+  width:100%;
+  border-collapse:collapse;
+  border-radius:14px;
+  overflow:hidden;
+}
+thead th{
+  background:#1db954;
+  color:#fff;
+  position:sticky;
+  top:0;
+  z-index:1;
+}
+th,td{
+  padding:13px;
+  border-bottom:1px solid #eee;
+  text-align:center;
+}
+tbody tr:hover{background:#f7fdf9}
+/* STATUS */
+select.status{
+  padding:7px 14px;
+  border-radius:20px;
+  color:#fff;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+}
+select.status.Pending{background:#f0ad4e}
+select.status.Approve{background:#1db954}
+select.status.Cancel{background:#d9534f}
+/* BUTTON */
+button.save{
+  min-width:90px;
+  padding:8px 14px;
+  border-radius:10px;
+  background:#1db954;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  transition:.2s;
+}
+button.save:hover{transform:scale(1.05)}
+button.save:disabled{opacity:.7;cursor:not-allowed}
+/* SPINNER */
+.spinner{
+  width:16px;height:16px;
+  border:3px solid rgba(255,255,255,.4);
+  border-top:3px solid #fff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#777;
+}
+/* MOBILE */
+@media(max-width:768px){
+  body{padding:12px}
+  .header{text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>⚽ Admin Booking Mini Soccer</h2>
+  <p>Kelola jadwal & status booking secara real-time</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><h3 id="total">0</h3><span>Total Booking</span></div>
+  <div class="stat pending"><h3 id="pending">0</h3><span>Pending</span></div>
+  <div class="stat approve"><h3 id="approve">0</h3><span>Approve</span></div>
+  <div class="stat cancel"><h3 id="cancel">0</h3><span>Cancel</span></div>
+</div>
+
+<div class="card filter">
+  <input type="date" id="startDate">
+  <input type="date" id="endDate">
+  <input type="text" id="search" placeholder="Cari tim / WA..." oninput="render(filtered)">
+  <button onclick="applyFilter()">Filter</button>
+  <button class="reset" onclick="resetFilter()">Reset</button>
+</div>
+
+<div class="card table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nama Tim</th>
+        <th>WhatsApp</th>
+        <th>Tanggal</th>
+        <th>Jam</th>
+        <th>Durasi</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="data">
+      <tr><td colspan="7" class="loading">Memuat data...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzbP-DxMD5vFD0VoguXcvo9OD99qzZDhRPu_j2m0WUALagvgyjmuedUKo1Q0XAhdENb/exec";
+let rows = [], filtered = [];
+
+function formatTanggal(t){
+  const d = new Date(t);
+  return isNaN(d) ? t : d.toLocaleDateString("id-ID");
+}
+
+function updateStats(){
+  total.textContent = rows.length;
+  pending.textContent = rows.filter(r => String(r[6]).trim() == "Pending").length;
+  approve.textContent = rows.filter(r => String(r[6]).trim() == "Approve").length;
+  cancel.textContent  = rows.filter(r => String(r[6]).trim() == "Cancel").length;
+}
+
+function render(dataRows){
+  const key = search.value.toLowerCase();
+  filtered = dataRows.filter(r =>
+    r[1].toLowerCase().includes(key) || r[2].includes(key)
+  );
+
+  if(!filtered.length){
+    data.innerHTML = `<tr><td colspan="7" class="loading">Data kosong</td></tr>`;
+    return;
+  }
+
+  data.innerHTML = filtered.map((r,i) => `
+    <tr>
+      <td>${r[1]}</td>
+      <td>${r[2]}</td>
+      <td>${formatTanggal(r[3])}</td>
+      <td>${r[4]}</td>
+      <td>${r[5]}</td>
+      <td>
+        <select class="status ${r[6]}" data-index="${i}" onchange="this.className='status '+this.value">
+          <option ${r[6]=="Pending"?"selected":""}>Pending</option>
+          <option ${r[6]=="Approve"?"selected":""}>Approve</option>
+          <option ${r[6]=="Cancel"?"selected":""}>Cancel</option>
+        </select>
+      </td>
+      <td>
+        <button class="save" onclick="updateStatus(this)">Simpan</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function loadData(s="", e=""){
+  let url = API_URL+"?action=list";
+  if(s && e) url += `&startDate=${s}&endDate=${e}`;
+  fetch(url)
+    .then(r => r.json())
+    .then(res => {
+      rows = res;
+      updateStats();
+      render(rows);
+    })
+    .catch(() => data.innerHTML = `<tr><td colspan="7" class="loading">Gagal load</td></tr>`);
+}
+
+function applyFilter(){
+  if(!startDate.value || !endDate.value) return alert("Pilih tanggal lengkap");
+  loadData(startDate.value, endDate.value);
+}
+
+function resetFilter(){
+  startDate.value = "";
+  endDate.value = "";
+  search.value = "";
+  loadData();
+}
+
+function updateStatus(btn){
+  const select = btn.closest("tr").querySelector("select");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div>`;
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: new URLSearchParams({
+      action: "update",
+      index: select.dataset.index,
+      status: select.value
+    })
+  })
+  .then(() => loadData())
+  .finally(() => {
+    btn.disabled = false;
+    btn.innerHTML = "Simpan";
+  });
+}
+
+// load data pertama kali
+loadData();
+</script>
+
+</body>
+</html>

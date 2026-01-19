@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Soccer Arena</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#1db954;
+  --dark:#0f172a;
+  --soft:#f4f6f9;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+body{background:var(--soft);color:#333}
+a{text-decoration:none}
+
+/* ================= HEADER ================= */
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(15,138,61,.95);
+  backdrop-filter:blur(10px);
+  color:#fff;
+  padding:18px 60px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+header h1{font-size:24px;font-weight:700}
+nav a{color:#fff;margin-left:25px;font-weight:500}
+
+/* ================= HERO ================= */
+.hero{
+  height:95vh;
+  background:
+    linear-gradient(to bottom,rgba(0,0,0,.65),rgba(0,0,0,.8)),
+    url('https://asset.ayo.co.id/image/venue/173850390052117.image_cropper_E89CF576-426C-4242-9548-C358324FE126-51600-0000182F0A34CF07.jpg') center/cover;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hero-content{
+  color:#fff;
+  text-align:center;
+  max-width:750px;
+}
+.hero-content h2{font-size:52px;margin-bottom:15px}
+.hero-content p{font-size:18px;margin-bottom:35px;opacity:.9}
+
+.btn{
+  background:var(--primary);
+  color:#fff;
+  padding:15px 38px;
+  border-radius:50px;
+  font-weight:600;
+  display:inline-block;
+  transition:.3s;
+}
+.btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(29,185,84,.45);
+}
+
+/* ================= SECTION ================= */
+section{padding:90px 70px}
+.section-title{text-align:center;margin-bottom:60px}
+.section-title h2{font-size:38px;color:var(--primary)}
+
+/* ================= ABOUT ================= */
+.about{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:50px;
+  align-items:center;
+}
+.about p{font-size:17px;line-height:1.8}
+.about img{
+  width:100%;
+  border-radius:25px;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
+}
+
+/* ================= FACILITIES ================= */
+.facilities{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:30px;
+}
+.facility{
+  background:#fff;
+  padding:35px;
+  border-radius:20px;
+  text-align:center;
+  font-weight:600;
+  box-shadow:0 15px 35px rgba(0,0,0,.08);
+}
+
+/* ================= PRICING ================= */
+.pricing{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:30px;
+}
+.price-card{
+  background:#fff;
+  padding:45px 35px;
+  border-radius:25px;
+  text-align:center;
+  box-shadow:0 15px 35px rgba(0,0,0,.1);
+}
+.price{
+  font-size:34px;
+  color:var(--primary);
+  margin:25px 0;
+  font-weight:700;
+}
+
+/* ================= BOOKING ================= */
+.booking{
+  max-width:950px;
+  margin:auto;
+  background:#fff;
+  padding:45px;
+  border-radius:30px;
+  box-shadow:0 20px 40px rgba(0,0,0,.12);
+}
+.booking form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+}
+.booking input,.booking select{
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #ddd;
+}
+.booking button{
+  grid-column:span 2;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:16px;
+  border-radius:50px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+/* ================= CONTACT ================= */
+.contact{
+  background:linear-gradient(135deg,#1db954,#16a34a);
+  color:#fff;
+  text-align:center;
+  padding:80px 30px;
+}
+
+/* ================= FOOTER ================= */
+footer{
+  background:var(--dark);
+  color:#fff;
+  text-align:center;
+  padding:25px;
+}
+
+/* ================= ANIMASI REVEAL ================= */
+.reveal{
+  opacity:0;
+  transform:translateY(40px);
+  transition:all .9s ease;
+}
+.reveal.active{
+  opacity:1;
+  transform:none;
+}
+.delay-1{transition-delay:.1s}
+.delay-2{transition-delay:.2s}
+.delay-3{transition-delay:.3s}
+.delay-4{transition-delay:.4s}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+  header{flex-direction:column}
+  nav{margin-top:10px}
+  section{padding:70px 25px}
+  .about{grid-template-columns:1fr}
+  .hero-content h2{font-size:36px}
+  .booking form{grid-template-columns:1fr}
+  .booking button{grid-column:span 1}
+}
+</style>
+</head>
+
+<body>
+
+<header class="reveal delay-1">
+  <h1>Mini Soccer Arena</h1>
+  <nav>
+    <a href="#about">Tentang</a>
+    <a href="#fasilitas">Fasilitas</a>
+    <a href="#harga">Harga</a>
+    <a href="#booking">Booking</a>
+  </nav>
+</header>
+
+<section class="hero reveal delay-2">
+  <div class="hero-content">
+    <h2 class="reveal delay-1">Lapangan Mini Soccer Terbaik</h2>
+    <p class="reveal delay-2">Booking Mudah • Cepat • Otomatis</p>
+    <a href="#booking" class="btn reveal delay-3">Booking Sekarang</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-title reveal"><h2>Tentang Kami</h2></div>
+  <div class="about">
+    <p class="reveal delay-1">Kami menyediakan lapangan mini soccer berkualitas tinggi dengan fasilitas lengkap dan sistem booking modern.</p>
+    <img class="reveal delay-2" src="https://media-cdn.tripadvisor.com/media/photo-s/1b/c5/5b/1b/fair-play-mini-soccer.jpg">
+  </div>
+</section>
+
+<section id="fasilitas">
+  <div class="section-title reveal"><h2>Fasilitas</h2></div>
+  <div class="facilities">
+    <div class="facility reveal delay-1">Rumput Sintetis Premium</div>
+    <div class="facility reveal delay-2">Lampu LED Profesional</div>
+    <div class="facility reveal delay-3">Ruang Ganti Nyaman</div>
+    <div class="facility reveal delay-4">Parkir Luas</div>
+  </div>
+</section>
+
+<section id="harga">
+  <div class="section-title reveal"><h2>Harga Sewa</h2></div>
+  <div class="pricing">
+    <div class="price-card reveal delay-1">
+      <h3>Siang</h3>
+      <div class="price">Rp 250.000</div>
+      <p>/ Jam</p>
+    </div>
+    <div class="price-card reveal delay-2">
+      <h3>Malam</h3>
+      <div class="price">Rp 350.000</div>
+      <p>/ Jam</p>
+    </div>
+  </div>
+</section>
+
+<section id="booking">
+  <div class="section-title reveal"><h2>Form Booking</h2></div>
+  <div class="booking reveal delay-1">
+    <form onsubmit="submitBooking(event)">
+      <input id="nama" placeholder="Nama Tim" required>
+      <input id="telp" placeholder="No WhatsApp" required>
+      <input id="tanggal" type="date" required>
+      <select id="jam">
+        <option>08.00 - 09.00</option>
+        <option>09.00 - 10.00</option>
+        <option>19.00 - 20.00</option>
+        <option>20.00 - 21.00</option>
+      </select>
+      <select id="durasi">
+        <option>1 Jam</option>
+        <option>2 Jam</option>
+      </select>
+      <button type="submit">Kirim Booking</button>
+    </form>
+  </div>
+</section>
+
+<section class="contact reveal">
+  <h2>Hubungi Kami</h2>
+  <p>📞 0812-3456-7890</p>
+  <a href="https://wa.me/6285183329989" class="btn">WhatsApp</a>
+</section>
+
+<footer class="reveal">
+  © 2026 Mini Soccer Arena
+</footer>
+
+<script>
+/* ====== ANIMASI MUNCUL SATU PER SATU ====== */
+const reveals = document.querySelectorAll(".reveal");
+
+function revealOnScroll(){
+  const windowHeight = window.innerHeight;
+  reveals.forEach(el=>{
+    const top = el.getBoundingClientRect().top;
+    if(top < windowHeight - 100){
+      el.classList.add("active");
+    }
+  });
+}
+window.addEventListener("scroll", revealOnScroll);
+window.addEventListener("load", revealOnScroll);
+</script>
+
+<script>
+/* ====== BOOKING (TIDAK DIUBAH) ====== */
+const API_URL="https://script.google.com/macros/s/AKfycbzTEr9IGWP0dNLVQhlYDpyxsQynHrFJ0Kp4QTH3s-fxt8FUD7nHc38Ar_4rvKKXff7M/exec";
+const WA_ADMIN="6285183329989";
+
+function submitBooking(e){
+  e.preventDefault();
+  const formData=new URLSearchParams();
+  formData.append("nama",nama.value);
+  formData.append("telp",telp.value);
+  formData.append("tanggal",tanggal.value);
+  formData.append("jam",jam.value);
+  formData.append("durasi",durasi.value);
+
+  fetch(API_URL,{method:"POST",body:formData})
+  .then(res=>res.text())
+  .then(res=>{
+    if(res==="success"){
+      const pesan=`Booking Mini Soccer%0A
+Nama Tim: ${nama.value}%0A
+WA: ${telp.value}%0A
+Tanggal: ${tanggal.value}%0A
+Jam: ${jam.value}%0A
+Durasi: ${durasi.value}`;
+      window.open(`https://wa.me/${WA_ADMIN}?text=${pesan}`);
+      alert("Booking berhasil dikirim!");
+      e.target.reset();
+    }else alert("Server error: "+res);
+  })
+  .catch(()=>alert("Gagal mengirim booking!"));
+}
+</script>
+
+</body>
+</html>
